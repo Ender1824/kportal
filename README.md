@@ -1,44 +1,43 @@
-# kPortal
+# Kportal
 
-A static, space-themed launch page for kportal.net. It replaces the Homarr dashboard. It has no server, no login and no database, so there is nothing to attack. GitHub Pages serves plain files.
+The launch page for the apps hosted on Kportal, served at https://www.kportal.net by GitHub Pages. It's plain HTML, CSS and JavaScript, with no server, login, database or build step. Nothing loads from other websites, except the Minecraft status check.
 
-## What's here
+## Files
 
 | File | Purpose |
 |---|---|
-| `index.html` | The whole page: styles, starfield, search, status checks |
-| `assets/logo.png` | The kPortal logo, copied from Homarr |
-| `assets/space.jpg` | Background image (the Webb/Hubble image Homarr used, compressed from 30 MB to 650 KB) |
-| `assets/icons/*.svg` | App icons, stored here so the page doesn't load anything from a CDN |
-| `CNAME` | Tells GitHub Pages to serve this page at `kportal.net` |
-| `.nojekyll` | Tells GitHub Pages to serve the files as-is |
+| `index.html` | Page structure: header, app tiles, Minecraft card, footer |
+| `styles.css` | All styling. Colors are CSS variables at the top of the file |
+| `app.js` | Clock, status checks, Minecraft status, copy button, keyboard shortcuts, starfield |
+| `assets/logo.png` | Original logo (used as the favicon and phone home-screen icon) |
+| `assets/logo-light.png` | Logo recolored with light outlines for the dark page |
+| `assets/space.jpg` | Background for wide screens |
+| `assets/space-mobile.jpg` | Smaller background for phones |
+| `assets/icons/*.svg` | App icons |
+| `CNAME`, `.nojekyll` | GitHub Pages settings for the custom domain. Don't change these |
 
-## Adding or changing an app
+## Adding an app
 
-Copy one of the `<a class="card">` blocks in `index.html`, then change the `href`, `data-ping`, icon, name and host. More icons are at https://github.com/homarr-labs/dashboard-icons (download the `.svg` into `assets/icons/`).
+1. Download an icon `.svg` from https://github.com/homarr-labs/dashboard-icons into `assets/icons/`.
+2. In `index.html`, copy one `<li>…</li>` block inside `<ul class="apps">` and change:
+   - `href` and `data-ping`: the app's address, e.g. `https://photos.kportal.net/`
+   - `data-key`: the next free number key
+   - the icon `src` and the name
+3. With 4 or more apps, change `repeat(3, …)` under `.apps` in `styles.css` to the number of columns you want. Also update the shortcut hint in the footer and the Minecraft button's `data-key`.
+4. Commit and push. GitHub Pages updates within about a minute.
 
-## Deploy to GitHub Pages
+## How things work
 
-1. Create a new repository on GitHub (for example `kportal`). It can be public or private, but Pages on a private repository needs a paid plan.
-2. Push this folder to it:
-   ```bash
-   git init && git add . && git commit -m "kPortal static page"
-   git branch -M main
-   git remote add origin https://github.com/<you>/kportal.git
-   git push -u origin main
-   ```
-3. On GitHub, go to **Settings → Pages**. Set **Source** to *Deploy from a branch*, choose `main` and `/ (root)`, and save. The custom domain should fill in as `kportal.net` from the `CNAME` file.
-4. In Cloudflare DNS for kportal.net:
-   - Remove the Cloudflare Tunnel / proxy route that sends the bare `kportal.net` to Homarr. Leave the `request.`, `audiobooks.`, `calibreweb.` and `mc.` routes alone.
-   - Add `A` records for `kportal.net` pointing at GitHub: `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`.
-   - Add a `CNAME` record for `www` pointing to `<you>.github.io` (right now `www` returns a 404).
-   - At first, set these records to **DNS only** (grey cloud) so GitHub can issue the HTTPS certificate. When it's issued, turn the orange cloud back on if you like and set SSL mode to *Full*.
-5. Back in **Settings → Pages**, tick **Enforce HTTPS** once it's available.
-6. When the new page is live, stop the Homarr container so it's no longer reachable.
+- **Status pills:** every 60 seconds while the tab is open, the visitor's browser sends each app a quick request. Any reply shows **Online**; an error or no reply within 6 seconds shows **Offline**. Browsers don't let a static page read another site's response, so this shows whether a site is reachable, not a full health check.
+- **Minecraft:** player counts come from the public `api.mcsrvstat.us` service. **Copy address** copies `mc.kportal.net`.
+- **Shortcuts:** `1`–`3` open the apps and `4` copies the server address.
+- **Security:** the Content-Security-Policy in `index.html` only lets the page load its own files and contact `*.kportal.net` and the Minecraft status service. It allows no inline scripts or styles.
+- **Motion:** with "Reduce motion" turned on in the device settings, the page is completely still.
 
-## Notes
+## Testing locally
 
-- **Status dots:** each app gets a quick request from the visitor's browser. Green means the host answered and red means it didn't. Browsers don't let a static page read another site's response, so this shows whether a host is reachable, not a full health check.
-- **Minecraft status:** this uses the public `api.mcsrvstat.us` service. Clicking the card copies `mc.kportal.net` to the clipboard.
-- **Content-Security-Policy:** the page can only load its own files and talk to `*.kportal.net` and the Minecraft status API.
-- **Shortcuts:** `/` jumps to search, `Enter` opens the first match and `Esc` clears the search.
+```bash
+python3 -m http.server 8000
+```
+
+Then open http://localhost:8000.

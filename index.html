@@ -1,484 +1,84 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src https://api.mcsrvstat.us https://*.kportal.net; base-uri 'none'; form-action 'none'; object-src 'none'">
-<meta name="referrer" content="no-referrer">
-<meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#05060f">
-<title>kPortal</title>
-<link rel="icon" href="assets/logo.png">
-<style>
-  :root {
-    --bg: #05060f;
-    --ink: #e8ecff;
-    --muted: #8b93b8;
-    --glass: rgba(18, 22, 48, 0.45);
-    --glass-hi: rgba(36, 42, 90, 0.55);
-    --edge: rgba(150, 170, 255, 0.18);
-    --glow-a: #7b5cff;
-    --glow-b: #2ee6d6;
-    --ok: #3ddc84;
-    --down: #ff5a6e;
-    --wait: #f5c84c;
-    --radius: 22px;
-    --font: ui-sans-serif, -apple-system, "SF Pro Display", "Segoe UI", Roboto, system-ui, sans-serif;
-    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; min-height: 100%; }
-  body {
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--font);
-    overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  /* ---------- Background layers ---------- */
-  .space {
-    position: fixed; inset: -4%;
-    background: url("assets/space.jpg") center / cover no-repeat;
-    opacity: .55;
-    filter: saturate(1.25) contrast(1.1);
-    transform: translate3d(var(--px, 0), var(--py, 0), 0) scale(1.04);
-    transition: transform .6s cubic-bezier(.2,.7,.2,1);
-    z-index: -3;
-  }
-  .nebula {
-    position: fixed; inset: 0; z-index: -2; pointer-events: none;
-    background:
-      radial-gradient(60vmax 40vmax at 15% 10%, rgba(123, 92, 255, .28), transparent 60%),
-      radial-gradient(50vmax 35vmax at 90% 85%, rgba(46, 230, 214, .18), transparent 60%),
-      radial-gradient(40vmax 30vmax at 80% 5%, rgba(255, 92, 170, .12), transparent 60%),
-      linear-gradient(180deg, rgba(5,6,15,.2) 0%, rgba(5,6,15,.75) 100%);
-    animation: drift 40s ease-in-out infinite alternate;
-  }
-  @keyframes drift {
-    to { transform: translate3d(-2%, 1.5%, 0) scale(1.06); filter: hue-rotate(25deg); }
-  }
-  #stars { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
-
-  /* ---------- Layout ---------- */
-  .wrap {
-    width: min(1080px, 100% - 32px);
-    margin: 0 auto;
-    padding: clamp(28px, 6vh, 72px) 0 48px;
-    min-height: 100vh;
-    display: flex; flex-direction: column;
-  }
-  header {
-    display: flex; align-items: center; gap: 18px;
-    margin-bottom: clamp(28px, 6vh, 56px);
-  }
-  .logo {
-    width: 72px; height: 72px; flex: none;
-    padding: 10px;
-    border-radius: 20px;
-    background: rgba(255,255,255,.92);
-    box-shadow: 0 0 0 1px var(--edge), 0 0 40px rgba(123,92,255,.45);
-    animation: float 6s ease-in-out infinite;
-  }
-  .logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
-  @keyframes float { 50% { transform: translateY(-6px) rotate(-2deg); } }
-  .brand h1 {
-    margin: 0;
-    font-size: clamp(30px, 6vw, 52px);
-    font-weight: 800;
-    letter-spacing: .02em;
-    line-height: 1;
-    background: linear-gradient(92deg, #fff 0%, #c9b8ff 40%, #7ff3e8 100%);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-    text-shadow: 0 0 30px rgba(123,92,255,.35);
-  }
-  .brand p {
-    margin: 8px 0 0; color: var(--muted);
-    font-family: var(--mono); font-size: 13px; letter-spacing: .08em;
-  }
-  .clock {
-    margin-left: auto; text-align: right;
-    font-family: var(--mono);
-  }
-  .clock .t { font-size: clamp(22px, 4vw, 34px); font-weight: 600; letter-spacing: .04em; }
-  .clock .d { color: var(--muted); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; margin-top: 4px; }
-
-  .search {
-    position: relative; display: block; margin-bottom: 28px;
-  }
-  .search svg { z-index: 1; pointer-events: none; }
-  .search input {
-    width: 100%;
-    padding: 16px 20px 16px 50px;
-    border-radius: 16px;
-    border: 1px solid var(--edge);
-    background: var(--glass);
-    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
-    color: var(--ink); font: inherit; font-size: 16px;
-    outline: none;
-    transition: border-color .2s, box-shadow .2s;
-  }
-  .search input::placeholder { color: var(--muted); }
-  .search input:focus { border-color: rgba(160,140,255,.7); box-shadow: 0 0 0 4px rgba(123,92,255,.18); }
-  .search svg { position: absolute; left: 18px; top: 50%; translate: 0 -50%; color: var(--muted); }
-  .search kbd {
-    position: absolute; right: 16px; top: 50%; translate: 0 -50%;
-    font-family: var(--mono); font-size: 12px; color: var(--muted);
-    border: 1px solid var(--edge); border-radius: 6px; padding: 2px 8px;
-  }
-
-  .section-title {
-    font-family: var(--mono); font-size: 12px; letter-spacing: .25em; text-transform: uppercase;
-    color: var(--muted); margin: 0 0 14px 4px;
-    display: flex; align-items: center; gap: 12px;
-  }
-  .section-title::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--edge), transparent); }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 18px;
-    margin-bottom: 36px;
-  }
-
-  /* ---------- Cards ---------- */
-  .card {
-    --mx: 50%; --my: 50%;
-    position: relative;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 14px;
-    min-height: 200px;
-    padding: 26px 18px 22px;
-    border-radius: var(--radius);
-    background:
-      radial-gradient(240px circle at var(--mx) var(--my), rgba(140,120,255,.18), transparent 60%),
-      var(--glass);
-    border: 1px solid var(--edge);
-    -webkit-backdrop-filter: blur(16px) saturate(1.3); backdrop-filter: blur(16px) saturate(1.3);
-    color: inherit; text-decoration: none;
-    transform: perspective(800px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0);
-    transition: transform .25s ease, border-color .25s, box-shadow .25s, background .25s;
-    overflow: hidden;
-    isolation: isolate;
-    opacity: 0; animation: rise .7s cubic-bezier(.2,.7,.2,1) forwards;
-    animation-delay: calc(var(--i, 0) * 90ms + 150ms);
-    cursor: pointer;
-  }
-  @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; } }
-  .card::before {
-    content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; z-index: -1;
-    background: conic-gradient(from var(--ang, 0deg), transparent 0 60%, var(--glow-a), var(--glow-b), transparent 85%);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor; mask-composite: exclude;
-    opacity: 0; transition: opacity .3s;
-  }
-  .card:hover, .card:focus-visible {
-    border-color: transparent;
-    box-shadow: 0 20px 60px -20px rgba(123,92,255,.6), 0 0 0 1px rgba(160,140,255,.25);
-    outline: none;
-  }
-  .card:hover::before, .card:focus-visible::before { opacity: 1; animation: spin 3s linear infinite; }
-  @property --ang { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
-  @keyframes spin { to { --ang: 360deg; } }
-
-  .card .icon {
-    width: 84px; height: 84px;
-    display: grid; place-items: center;
-    filter: drop-shadow(0 10px 24px rgba(0,0,0,.45));
-    transition: transform .35s cubic-bezier(.2,.7,.2,1);
-  }
-  .card:hover .icon { transform: translateY(-4px) scale(1.07); }
-  .card .icon img { width: 100%; height: 100%; object-fit: contain; }
-  .card h2 { margin: 0; font-size: 18px; font-weight: 700; letter-spacing: .01em; }
-  .card .host { font-family: var(--mono); font-size: 12px; color: var(--muted); }
-
-  .status {
-    position: absolute; top: 14px; right: 14px;
-    width: 10px; height: 10px; border-radius: 50%;
-    background: var(--wait);
-    box-shadow: 0 0 0 0 currentColor;
-  }
-  .status[data-s="up"] { background: var(--ok); color: rgba(61,220,132,.55); animation: ping 2.4s ease-out infinite; }
-  .status[data-s="down"] { background: var(--down); color: rgba(255,90,110,.5); }
-  @keyframes ping { 0% { box-shadow: 0 0 0 0 currentColor; } 80%,100% { box-shadow: 0 0 0 10px transparent; } }
-
-  .card.hidden { display: none; }
-
-  /* Minecraft card extras */
-  .mc .players { font-family: var(--mono); font-size: 13px; color: var(--ink); }
-  .mc .copy {
-    font-family: var(--mono); font-size: 12px; color: var(--muted);
-    border: 1px dashed var(--edge); border-radius: 8px; padding: 4px 10px;
-    transition: color .2s, border-color .2s;
-  }
-  .mc:hover .copy { color: var(--ink); border-color: rgba(160,140,255,.5); }
-
-  footer {
-    margin-top: auto; padding-top: 24px;
-    text-align: center; font-family: var(--mono); font-size: 12px; color: var(--muted); letter-spacing: .1em;
-  }
-  footer span { color: #b9a8ff; }
-
-  .toast {
-    position: fixed; left: 50%; bottom: 28px; translate: -50% 20px;
-    background: var(--glass-hi); border: 1px solid var(--edge);
-    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
-    padding: 10px 18px; border-radius: 12px; font-size: 14px;
-    opacity: 0; pointer-events: none; transition: opacity .25s, translate .25s;
-  }
-  .toast.show { opacity: 1; translate: -50% 0; }
-
-  @media (max-width: 560px) {
-    header { flex-wrap: wrap; }
-    .logo { width: 60px; height: 60px; }
-    .clock { margin-left: 0; text-align: left; width: 100%; }
-    .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    .card { min-height: 170px; padding: 22px 10px 18px; }
-    .card .icon { width: 64px; height: 64px; }
-    .card h2 { font-size: 16px; }
-    .search kbd { display: none; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before { animation: none !important; transition: none !important; }
-    .card { opacity: 1; }
-  }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src https://api.mcsrvstat.us https://*.kportal.net; font-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#070914">
+  <meta name="description" content="Kportal: apps and servers hosted on kportal.net">
+  <title>Kportal</title>
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="apple-touch-icon" href="assets/logo.png">
+  <link rel="preload" as="image" href="assets/space-mobile.jpg" media="(max-width: 700px)">
+  <link rel="preload" as="image" href="assets/space.jpg" media="(min-width: 701px)">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
 </head>
 <body>
-  <div class="space" aria-hidden="true"></div>
-  <div class="nebula" aria-hidden="true"></div>
-  <canvas id="stars" aria-hidden="true"></canvas>
+  <div class="sky" aria-hidden="true"></div>
+  <canvas class="stars" id="stars" aria-hidden="true"></canvas>
 
-  <div class="wrap">
-    <header>
-      <div class="logo"><img src="assets/logo.png" alt="kPortal logo"></div>
-      <div class="brand">
-        <h1>kPortal</h1>
-        <p id="greet">// all systems nominal</p>
-      </div>
-      <div class="clock" aria-live="off">
-        <div class="t" id="time">--:--</div>
-        <div class="d" id="date"></div>
+  <div class="page">
+    <header class="top">
+      <a class="brand" href="./" aria-label="Kportal home">
+        <img class="brand-logo" src="assets/logo-light.png" width="256" height="256" alt="">
+        <span class="brand-name">Kportal</span>
+      </a>
+      <div class="clock" aria-hidden="true">
+        <time class="clock-time" id="clock-time">&nbsp;</time>
+        <span class="clock-date" id="clock-date"></span>
       </div>
     </header>
 
-    <label class="search">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-      <input id="q" type="search" placeholder="Search the portal…" autocomplete="off" aria-label="Filter apps">
-      <kbd>/</kbd>
-    </label>
+    <main>
+      <h1 class="visually-hidden">Kportal apps</h1>
 
-    <div class="section-title">Home</div>
-    <div class="grid" id="grid">
-      <a class="card" style="--i:0" href="https://request.kportal.net/" data-ping="https://request.kportal.net/" rel="noopener noreferrer">
-        <span class="status" title="Checking…"></span>
-        <span class="icon"><img src="assets/icons/overseerr.svg" alt=""></span>
-        <h2>Request Media</h2>
-        <span class="host">request.kportal.net</span>
-      </a>
-      <a class="card" style="--i:1" href="https://audiobooks.kportal.net/" data-ping="https://audiobooks.kportal.net/" rel="noopener noreferrer">
-        <span class="status" title="Checking…"></span>
-        <span class="icon"><img src="assets/icons/audiobookshelf.svg" alt=""></span>
-        <h2>AudioBooks</h2>
-        <span class="host">audiobooks.kportal.net</span>
-      </a>
-      <a class="card" style="--i:2" href="https://calibreweb.kportal.net/" data-ping="https://calibreweb.kportal.net/" rel="noopener noreferrer">
-        <span class="status" title="Checking…"></span>
-        <span class="icon"><img src="assets/icons/kavita.svg" alt=""></span>
-        <h2>Books</h2>
-        <span class="host">calibreweb.kportal.net</span>
-      </a>
-      <button class="card mc" style="--i:3; font:inherit" type="button" id="mc" data-addr="mc.kportal.net">
-        <span class="status" title="Checking…"></span>
-        <span class="icon"><img src="assets/icons/minecraft.svg" alt=""></span>
-        <h2>Minecraft</h2>
-        <span class="players" id="mc-players">scanning…</span>
-        <span class="copy">mc.kportal.net ⧉</span>
-      </button>
-    </div>
+      <ul class="apps" aria-label="Apps">
+        <li>
+          <a class="tile" href="https://request.kportal.net/" rel="noopener noreferrer" data-ping="https://request.kportal.net/" data-key="1">
+            <img class="tile-icon" src="assets/icons/overseerr.svg" width="56" height="56" alt="">
+            <span class="tile-name">Request Media</span>
+            <span class="status" data-state="checking"><span class="status-dot"></span><span class="status-text">Checking…</span></span>
+          </a>
+        </li>
+        <li>
+          <a class="tile" href="https://audiobooks.kportal.net/" rel="noopener noreferrer" data-ping="https://audiobooks.kportal.net/" data-key="2">
+            <img class="tile-icon" src="assets/icons/audiobookshelf.svg" width="56" height="56" alt="">
+            <span class="tile-name">AudioBooks</span>
+            <span class="status" data-state="checking"><span class="status-dot"></span><span class="status-text">Checking…</span></span>
+          </a>
+        </li>
+        <li>
+          <a class="tile" href="https://calibreweb.kportal.net/" rel="noopener noreferrer" data-ping="https://calibreweb.kportal.net/" data-key="3">
+            <img class="tile-icon" src="assets/icons/kavita.svg" width="56" height="56" alt="">
+            <span class="tile-name">Books</span>
+            <span class="status" data-state="checking"><span class="status-dot"></span><span class="status-text">Checking…</span></span>
+          </a>
+        </li>
+      </ul>
 
-    <footer>kPortal · <span id="year"></span> · drifting through the void</footer>
+      <section class="server" aria-labelledby="mc-title">
+        <img class="server-icon" src="assets/icons/minecraft.svg" width="56" height="56" alt="">
+        <div class="server-info">
+          <div class="server-head">
+            <h2 class="server-title" id="mc-title">Minecraft</h2>
+            <span class="status" id="mc-status" data-state="checking"><span class="status-dot"></span><span class="status-text">Checking…</span></span>
+          </div>
+          <p class="server-meta"><code class="server-addr" id="mc-addr">mc.kportal.net</code><span class="server-players" id="mc-players"></span></p>
+        </div>
+        <button class="copy" id="mc-copy" type="button" data-key="4">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+          <span class="copy-label" id="mc-copy-label">Copy address</span>
+        </button>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <span>Kportal · <span id="year">2026</span></span>
+      <span class="keys">Press <kbd>1</kbd>–<kbd>3</kbd> to open an app, <kbd>4</kbd> to copy the server address</span>
+    </footer>
   </div>
-
-  <div class="toast" id="toast" role="status"></div>
-
-<script>
-(() => {
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  /* ---------- Starfield ---------- */
-  const c = document.getElementById('stars');
-  const ctx = c.getContext('2d');
-  let W, H, DPR, stars = [], shooters = [];
-  const mouse = { x: 0, y: 0 };
-
-  function resize() {
-    DPR = Math.min(devicePixelRatio || 1, 2);
-    W = c.width = innerWidth * DPR; H = c.height = innerHeight * DPR;
-    c.style.width = innerWidth + 'px'; c.style.height = innerHeight + 'px';
-    const n = Math.round((innerWidth * innerHeight) / 2600);
-    stars = Array.from({ length: n }, () => ({
-      x: Math.random() * W, y: Math.random() * H,
-      z: Math.random() * 0.9 + 0.1,            // depth: bigger = closer
-      tw: Math.random() * Math.PI * 2,
-      hue: Math.random() < .15 ? (Math.random() < .5 ? 220 : 280) : 0
-    }));
-  }
-
-  function spawnShooter() {
-    const fromLeft = Math.random() < .5;
-    shooters.push({
-      x: (fromLeft ? Math.random() * .5 : .5 + Math.random() * .5) * W,
-      y: Math.random() * H * .4,
-      vx: (fromLeft ? 1 : -1) * (9 + Math.random() * 6) * DPR,
-      vy: (4 + Math.random() * 3) * DPR,
-      life: 1
-    });
-  }
-
-  let t = 0;
-  function frame() {
-    t += 0.016;
-    ctx.clearRect(0, 0, W, H);
-    for (const s of stars) {
-      // slow drift + mouse parallax
-      s.y += s.z * 0.12 * DPR;
-      if (s.y > H) { s.y = 0; s.x = Math.random() * W; }
-      const px = s.x + mouse.x * s.z * 18 * DPR;
-      const py = s.y + mouse.y * s.z * 18 * DPR;
-      const a = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(t * (1 + s.z * 2) + s.tw)) * s.z;
-      const r = s.z * 1.4 * DPR;
-      ctx.fillStyle = s.hue ? `hsla(${s.hue},90%,80%,${a})` : `rgba(255,255,255,${a})`;
-      ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI * 2); ctx.fill();
-      if (s.z > .85) { // little cross-glint on the brightest stars
-        ctx.globalAlpha = a * .35;
-        ctx.fillRect(px - r * 4, py - .5 * DPR, r * 8, DPR);
-        ctx.fillRect(px - .5 * DPR, py - r * 4, DPR, r * 8);
-        ctx.globalAlpha = 1;
-      }
-    }
-    if (Math.random() < 0.006) spawnShooter();
-    shooters = shooters.filter(s => s.life > 0);
-    for (const s of shooters) {
-      const tail = 18;
-      const g = ctx.createLinearGradient(s.x, s.y, s.x - s.vx * tail / 2, s.y - s.vy * tail / 2);
-      g.addColorStop(0, `rgba(255,255,255,${s.life})`);
-      g.addColorStop(1, 'rgba(160,140,255,0)');
-      ctx.strokeStyle = g; ctx.lineWidth = 2 * DPR; ctx.lineCap = 'round';
-      ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(s.x - s.vx * tail / 2, s.y - s.vy * tail / 2); ctx.stroke();
-      s.x += s.vx; s.y += s.vy; s.life -= 0.012;
-    }
-    requestAnimationFrame(frame);
-  }
-
-  resize();
-  addEventListener('resize', () => { resize(); if (reduce) drawStatic(); });
-  if (reduce) drawStatic(); else requestAnimationFrame(frame);
-  function drawStatic() {
-    ctx.clearRect(0, 0, W, H);
-    for (const s of stars) {
-      ctx.fillStyle = `rgba(255,255,255,${.3 + .7 * s.z})`;
-      ctx.beginPath(); ctx.arc(s.x, s.y, s.z * 1.4 * DPR, 0, Math.PI * 2); ctx.fill();
-    }
-  }
-
-  const space = document.querySelector('.space');
-  addEventListener('pointermove', e => {
-    mouse.x = e.clientX / innerWidth - .5;
-    mouse.y = e.clientY / innerHeight - .5;
-    if (!reduce) {
-      space.style.setProperty('--px', (-mouse.x * 24) + 'px');
-      space.style.setProperty('--py', (-mouse.y * 24) + 'px');
-    }
-  }, { passive: true });
-
-  /* ---------- Card tilt + spotlight ---------- */
-  document.querySelectorAll('.card').forEach(card => {
-    card.addEventListener('pointermove', e => {
-      const r = card.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
-      card.style.setProperty('--mx', x * 100 + '%');
-      card.style.setProperty('--my', y * 100 + '%');
-      if (!reduce) {
-        card.style.setProperty('--ry', ((x - .5) * 10) + 'deg');
-        card.style.setProperty('--rx', ((.5 - y) * 10) + 'deg');
-      }
-    });
-    card.addEventListener('pointerleave', () => {
-      card.style.setProperty('--rx', '0deg'); card.style.setProperty('--ry', '0deg');
-    });
-  });
-
-  /* ---------- Clock + greeting ---------- */
-  const timeEl = document.getElementById('time'), dateEl = document.getElementById('date');
-  function tick() {
-    const d = new Date();
-    timeEl.textContent = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    dateEl.textContent = d.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' });
-  }
-  tick(); setInterval(tick, 10000);
-  const h = new Date().getHours();
-  document.getElementById('greet').textContent =
-    '// ' + (h < 5 ? 'night watch engaged' : h < 12 ? 'good morning, commander' : h < 18 ? 'good afternoon, commander' : 'good evening, commander');
-  document.getElementById('year').textContent = new Date().getFullYear();
-
-  /* ---------- Search filter ---------- */
-  const q = document.getElementById('q');
-  const cards = [...document.querySelectorAll('#grid .card')];
-  q.addEventListener('input', () => {
-    const v = q.value.trim().toLowerCase();
-    cards.forEach(c => c.classList.toggle('hidden', v && !c.textContent.toLowerCase().includes(v)));
-  });
-  q.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      const first = cards.find(c => !c.classList.contains('hidden') && c.href);
-      if (first) location.href = first.href;
-    }
-    if (e.key === 'Escape') { q.value = ''; q.dispatchEvent(new Event('input')); q.blur(); }
-  });
-  addEventListener('keydown', e => {
-    if (e.key === '/' && document.activeElement !== q) { e.preventDefault(); q.focus(); }
-  });
-
-  /* ---------- Reachability pings ----------
-     A static page can't read cross-origin responses, so this uses a no-cors
-     request: any response = reachable, network error/timeout = unreachable. */
-  function setStatus(el, s, label) { el.dataset.s = s; el.title = label; }
-  document.querySelectorAll('[data-ping]').forEach(card => {
-    const dot = card.querySelector('.status');
-    const ctl = new AbortController();
-    const timer = setTimeout(() => ctl.abort(), 6000);
-    fetch(card.dataset.ping, { mode: 'no-cors', cache: 'no-store', signal: ctl.signal, referrerPolicy: 'no-referrer' })
-      .then(() => setStatus(dot, 'up', 'Online'))
-      .catch(() => setStatus(dot, 'down', 'Unreachable'))
-      .finally(() => clearTimeout(timer));
-  });
-
-  /* ---------- Minecraft server status ---------- */
-  const mc = document.getElementById('mc');
-  const mcDot = mc.querySelector('.status'), mcPlayers = document.getElementById('mc-players');
-  fetch('https://api.mcsrvstat.us/3/' + mc.dataset.addr, { referrerPolicy: 'no-referrer' })
-    .then(r => r.json())
-    .then(d => {
-      if (d.online) {
-        setStatus(mcDot, 'up', 'Online');
-        const p = d.players || {};
-        mcPlayers.textContent = `${p.online ?? 0} / ${p.max ?? '?'} online`;
-      } else {
-        setStatus(mcDot, 'down', 'Offline');
-        mcPlayers.textContent = 'offline';
-      }
-    })
-    .catch(() => { setStatus(mcDot, 'down', 'Status unavailable'); mcPlayers.textContent = 'status unavailable'; });
-
-  const toast = document.getElementById('toast');
-  mc.addEventListener('click', async () => {
-    try { await navigator.clipboard.writeText(mc.dataset.addr); toast.textContent = 'Server address copied — see you in the overworld'; }
-    catch { toast.textContent = mc.dataset.addr; }
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2200);
-  });
-})();
-</script>
 </body>
 </html>
