@@ -37,21 +37,28 @@
 
       <ul class="apps" aria-label="Apps">
         <li>
-          <a class="tile" href="https://request.kportal.net/" rel="noopener noreferrer" data-ping="https://request.kportal.net/" data-key="1">
+          <a class="tile" href="https://app.plex.tv/" rel="noopener noreferrer" data-key="1" aria-label="Plex, opens app.plex.tv">
+            <img class="tile-icon" src="assets/icons/plex.svg" width="56" height="56" alt="">
+            <span class="tile-name">Plex</span>
+            <span class="status" data-state="external"><span class="status-text">app.plex.tv</span></span>
+          </a>
+        </li>
+        <li>
+          <a class="tile" href="https://request.kportal.net/" rel="noopener noreferrer" data-ping="https://request.kportal.net/" data-key="2">
             <img class="tile-icon" src="assets/icons/overseerr.svg" width="56" height="56" alt="">
             <span class="tile-name">Request Media</span>
             <span class="status" data-state="checking"><span class="status-dot"></span><span class="status-text">Checking…</span></span>
           </a>
         </li>
         <li>
-          <a class="tile" href="https://audiobooks.kportal.net/" rel="noopener noreferrer" data-ping="https://audiobooks.kportal.net/" data-key="2">
+          <a class="tile" href="https://audiobooks.kportal.net/" rel="noopener noreferrer" data-ping="https://audiobooks.kportal.net/" data-key="3">
             <img class="tile-icon" src="assets/icons/audiobookshelf.svg" width="56" height="56" alt="">
             <span class="tile-name">AudioBooks</span>
             <span class="status" data-state="checking"><span class="status-dot"></span><span class="status-text">Checking…</span></span>
           </a>
         </li>
         <li>
-          <a class="tile" href="https://calibreweb.kportal.net/" rel="noopener noreferrer" data-ping="https://calibreweb.kportal.net/" data-key="3">
+          <a class="tile" href="https://calibreweb.kportal.net/" rel="noopener noreferrer" data-ping="https://calibreweb.kportal.net/" data-key="4">
             <img class="tile-icon" src="assets/icons/kavita.svg" width="56" height="56" alt="">
             <span class="tile-name">Books</span>
             <span class="status" data-state="checking"><span class="status-dot"></span><span class="status-text">Checking…</span></span>
@@ -68,7 +75,7 @@
           </div>
           <p class="server-meta"><code class="server-addr" id="mc-addr">mc.kportal.net</code><span class="server-players" id="mc-players"></span></p>
         </div>
-        <button class="copy" id="mc-copy" type="button" data-key="4">
+        <button class="copy" id="mc-copy" type="button" data-key="5">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
           <span class="copy-label" id="mc-copy-label">Copy address</span>
         </button>
@@ -77,7 +84,7 @@
 
     <footer class="foot">
       <span>Kportal · <span id="year">2026</span></span>
-      <span class="keys">Press <kbd>1</kbd>–<kbd>3</kbd> to open an app, <kbd>4</kbd> to copy the server address</span>
+      <span class="keys">Press <kbd>1</kbd>–<kbd>4</kbd> to open an app, <kbd>5</kbd> to copy the server address</span>
     </footer>
   </div>
 </body>

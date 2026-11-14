@@ -164,7 +164,7 @@ main {
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
 }
 
@@ -242,6 +242,8 @@ main {
 .status[data-state="online"] .status-dot { background: var(--online); opacity: 1; box-shadow: 0 0 8px rgba(74, 222, 128, 0.7); }
 .status[data-state="offline"] { color: #fecdd6; background: rgba(251, 113, 133, 0.1); }
 .status[data-state="offline"] .status-dot { background: var(--offline); opacity: 1; }
+/* Links to outside services (e.g. Plex) show where they go instead of a status. */
+.status[data-state="external"] { padding-left: 9px; }
 
 /* ---------- Minecraft server ---------- */
 
@@ -372,8 +374,9 @@ button:focus-visible {
 .apps > li:nth-child(1) { animation-delay: 0.08s; }
 .apps > li:nth-child(2) { animation-delay: 0.13s; }
 .apps > li:nth-child(3) { animation-delay: 0.18s; }
-.server { animation-delay: 0.24s; }
-.foot   { animation-delay: 0.3s; }
+.apps > li:nth-child(4) { animation-delay: 0.23s; }
+.server { animation-delay: 0.29s; }
+.foot   { animation-delay: 0.35s; }
 
 /* ---------- Small screens ---------- */
 
@@ -384,7 +387,7 @@ button:focus-visible {
   .brand-name { font-size: 24px; }
   .clock-time { font-size: 18px; }
   .clock-date { font-size: 12px; }
-  .apps { gap: 10px; }
+  .apps { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .tile { padding: 18px 6px 14px; gap: 8px; border-radius: 18px; }
   .tile-icon { width: 48px; height: 48px; margin-bottom: 2px; }
   .tile-name { font-size: 13.5px; line-height: 1.25; }

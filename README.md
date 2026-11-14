@@ -23,14 +23,15 @@ The launch page for the apps hosted on Kportal, served at https://www.kportal.ne
    - `href` and `data-ping`: the app's address, e.g. `https://photos.kportal.net/`
    - `data-key`: the next free number key
    - the icon `src` and the name
-3. With 4 or more apps, change `repeat(3, …)` under `.apps` in `styles.css` to the number of columns you want. Also update the shortcut hint in the footer and the Minecraft button's `data-key`.
+3. The grid is 4 across on wider screens and 2 across on phones (`.apps` in `styles.css`). With 5 or more apps, change `repeat(4, …)` to the number of columns you want. Also renumber the footer shortcut hint and the Minecraft button's `data-key`.
 4. Commit and push. GitHub Pages updates within about a minute.
 
 ## How things work
 
 - **Status pills:** every 60 seconds while the tab is open, the visitor's browser sends each app a quick request. Any reply shows **Online**; an error or no reply within 6 seconds shows **Offline**. Browsers don't let a static page read another site's response, so this shows whether a site is reachable, not a full health check.
 - **Minecraft:** player counts come from the public `api.mcsrvstat.us` service. **Copy address** copies `mc.kportal.net`.
-- **Shortcuts:** `1`–`3` open the apps and `4` copies the server address.
+- **Shortcuts:** `1`–`4` open the apps and `5` copies the server address.
+- **Plex:** links to `https://app.plex.tv/`, where friends sign in with their own Plex account and see the libraries shared with them. It shows "app.plex.tv" instead of a status, because your Plex server is not at a kportal.net address the page can check.
 - **Security:** the Content-Security-Policy in `index.html` only lets the page load its own files and contact `*.kportal.net` and the Minecraft status service. It allows no inline scripts or styles.
 - **Motion:** with "Reduce motion" turned on in the device settings, the page is completely still.
 
