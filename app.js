@@ -30,23 +30,47 @@
 
   // A static page can't read another site's response, so this is a reachability
   // check: any response at all means the host is up; an error or timeout means it isn't.
-  const tiles = [...document.querySelectorAll('.tile[data-ping]')];
+  const cards = [...document.querySelectorAll('.card[data-ping]')];
+  const summary = document.getElementById('summary');
+  const summaryText = document.getElementById('summary-text');
+
+  // Top-left pill: "All services online" or "1 service offline".
+  function updateSummary() {
+    const services = [
+      ...cards.map((c) => ({ name: c.dataset.name, pill: c.querySelector('.status') })),
+      { name: 'Minecraft', pill: document.getElementById('mc-status') },
+    ];
+    if (services.some((s) => s.pill.dataset.state === 'checking')) return;
+    const down = services.filter((s) => s.pill.dataset.state === 'offline').map((s) => s.name);
+    if (down.length === 0) {
+      summary.dataset.state = 'ok';
+      summaryText.textContent = 'All services online';
+    } else {
+      summary.dataset.state = 'warn';
+      summaryText.textContent = down.length === 1
+        ? `${down[0]} is offline`
+        : down.length === 2 ? `${down[0]} and ${down[1]} are offline` : `${down.length} services offline`;
+    }
+  }
+
   function pingAll() {
-    for (const tile of tiles) {
-      const pill = tile.querySelector('.status');
-      const name = tile.querySelector('.tile-name').textContent;
+    for (const card of cards) {
+      const pill = card.querySelector('.status');
+      const name = card.dataset.name;
+      const desc = card.querySelector('.card-desc').textContent;
       const ctrl = new AbortController();
       const timer = setTimeout(() => ctrl.abort(), PING_TIMEOUT_MS);
-      fetch(tile.dataset.ping, { mode: 'no-cors', cache: 'no-store', signal: ctrl.signal, referrerPolicy: 'no-referrer' })
-        .then(() => { setStatus(pill, 'online'); tile.setAttribute('aria-label', `${name}, online`); })
-        .catch(() => { setStatus(pill, 'offline'); tile.setAttribute('aria-label', `${name}, offline`); })
-        .finally(() => clearTimeout(timer));
+      fetch(card.dataset.ping, { mode: 'no-cors', cache: 'no-store', signal: ctrl.signal, referrerPolicy: 'no-referrer' })
+        .then(() => { setStatus(pill, 'online'); card.setAttribute('aria-label', `${name}: ${desc}. Online`); })
+        .catch(() => { setStatus(pill, 'offline'); card.setAttribute('aria-label', `${name}: ${desc}. Offline`); })
+        .finally(() => { clearTimeout(timer); updateSummary(); });
     }
   }
 
   /* ---------- Minecraft ---------- */
   const mcPill = document.getElementById('mc-status');
   const mcPlayers = document.getElementById('mc-players');
+  const mcVersion = document.getElementById('mc-version');
   function checkMinecraft() {
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), 10_000);
@@ -60,13 +84,17 @@
           mcPlayers.textContent = Number.isFinite(p.max)
             ? `${online} / ${p.max} players`
             : `${online} ${online === 1 ? 'player' : 'players'}`;
+          // Show a short version like "1.21.4" when the server reports one.
+          const v = typeof d.version === 'string' ? d.version.match(/\d+\.\d+(\.\d+)?/) : null;
+          mcVersion.textContent = v ? `Java ${v[0]}` : '';
         } else {
           setStatus(mcPill, 'offline');
           mcPlayers.textContent = '';
+          mcVersion.textContent = '';
         }
       })
-      .catch(() => { setStatus(mcPill, 'checking', 'Status unavailable'); mcPlayers.textContent = ''; })
-      .finally(() => clearTimeout(timer));
+      .catch(() => { setStatus(mcPill, 'unknown', 'Status unavailable'); mcPlayers.textContent = ''; mcVersion.textContent = ''; })
+      .finally(() => { clearTimeout(timer); updateSummary(); });
   }
 
   /* ---------- Periodic checks (only while the tab is visible) ---------- */

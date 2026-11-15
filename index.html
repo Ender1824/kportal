@@ -7,7 +7,7 @@
   <meta name="referrer" content="no-referrer">
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#070914">
-  <meta name="description" content="Kportal: apps and servers hosted on kportal.net">
+  <meta name="description" content="Kportal: movies, shows, audiobooks, books and a Minecraft server, all in one place.">
   <title>Kportal</title>
   <link rel="icon" type="image/png" href="assets/logo.png">
   <link rel="apple-touch-icon" href="assets/logo.png">
@@ -22,64 +22,119 @@
 
   <div class="page">
     <header class="top">
-      <a class="brand" href="./" aria-label="Kportal home">
-        <img class="brand-logo" src="assets/logo-light.png" width="256" height="256" alt="">
-        <span class="brand-name">Kportal</span>
-      </a>
+      <p class="summary" id="summary" data-state="checking" aria-live="polite">
+        <span class="summary-dot"></span><span id="summary-text">Checking services…</span>
+      </p>
       <div class="clock" aria-hidden="true">
         <time class="clock-time" id="clock-time">&nbsp;</time>
         <span class="clock-date" id="clock-date"></span>
       </div>
     </header>
 
-    <main>
-      <h1 class="visually-hidden">Kportal apps</h1>
-
-      <ul class="apps" aria-label="Apps">
-        <li>
-          <a class="tile" href="https://app.plex.tv/" rel="noopener noreferrer" data-key="1" aria-label="Plex, opens app.plex.tv">
-            <img class="tile-icon" src="assets/icons/plex.svg" width="56" height="56" alt="">
-            <span class="tile-name">Plex</span>
-            <span class="status" data-state="external"><span class="status-text">app.plex.tv</span></span>
-          </a>
-        </li>
-        <li>
-          <a class="tile" href="https://request.kportal.net/" rel="noopener noreferrer" data-ping="https://request.kportal.net/" data-key="2">
-            <img class="tile-icon" src="assets/icons/overseerr.svg" width="56" height="56" alt="">
-            <span class="tile-name">Request Media</span>
-            <span class="status" data-state="checking"><span class="status-dot"></span><span class="status-text">Checking…</span></span>
-          </a>
-        </li>
-        <li>
-          <a class="tile" href="https://audiobooks.kportal.net/" rel="noopener noreferrer" data-ping="https://audiobooks.kportal.net/" data-key="3">
-            <img class="tile-icon" src="assets/icons/audiobookshelf.svg" width="56" height="56" alt="">
-            <span class="tile-name">AudioBooks</span>
-            <span class="status" data-state="checking"><span class="status-dot"></span><span class="status-text">Checking…</span></span>
-          </a>
-        </li>
-        <li>
-          <a class="tile" href="https://calibreweb.kportal.net/" rel="noopener noreferrer" data-ping="https://calibreweb.kportal.net/" data-key="4">
-            <img class="tile-icon" src="assets/icons/kavita.svg" width="56" height="56" alt="">
-            <span class="tile-name">Books</span>
-            <span class="status" data-state="checking"><span class="status-dot"></span><span class="status-text">Checking…</span></span>
-          </a>
-        </li>
-      </ul>
-
-      <section class="server" aria-labelledby="mc-title">
-        <img class="server-icon" src="assets/icons/minecraft.svg" width="56" height="56" alt="">
-        <div class="server-info">
-          <div class="server-head">
-            <h2 class="server-title" id="mc-title">Minecraft</h2>
-            <span class="status" id="mc-status" data-state="checking"><span class="status-dot"></span><span class="status-text">Checking…</span></span>
-          </div>
-          <p class="server-meta"><code class="server-addr" id="mc-addr">mc.kportal.net</code><span class="server-players" id="mc-players"></span></p>
+    <section class="hero" aria-labelledby="site-title">
+      <div class="orbit" aria-hidden="true">
+        <div class="orbit-glow"></div>
+        <div class="orbit-plane">
+          <div class="ring ring-1"><span class="moon"></span></div>
+          <div class="ring ring-2"><span class="moon"></span></div>
+          <div class="ring ring-3"><span class="moon"></span></div>
         </div>
-        <button class="copy" id="mc-copy" type="button" data-key="5">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
-          <span class="copy-label" id="mc-copy-label">Copy address</span>
-        </button>
+        <img class="orbit-core" src="assets/logo-light.png" width="256" height="256" alt="">
+      </div>
+      <div class="hero-text">
+        <h1 class="title" id="site-title">Kportal</h1>
+        <p class="tagline">Movies, shows, audiobooks, books and a Minecraft server, all in one place.</p>
+      </div>
+    </section>
+
+    <main>
+      <section class="group" aria-labelledby="g-watch">
+        <h2 class="group-title" id="g-watch">Watch</h2>
+        <ul class="cards">
+          <li>
+            <a class="card card-plex" href="https://app.plex.tv/" rel="noopener noreferrer" data-key="1" data-name="Plex">
+              <img class="card-icon" src="assets/icons/plex.svg" width="48" height="48" alt="">
+              <span class="card-body">
+                <span class="card-name">Plex</span>
+                <span class="card-desc">Stream movies and TV shows</span>
+              </span>
+              <span class="status" data-state="external"><span class="status-text">app.plex.tv</span></span>
+            </a>
+          </li>
+          <li>
+            <a class="card card-request" href="https://request.kportal.net/" rel="noopener noreferrer" data-ping="https://request.kportal.net/" data-key="2" data-name="Request Media">
+              <img class="card-icon" src="assets/icons/overseerr.svg" width="48" height="48" alt="">
+              <span class="card-body">
+                <span class="card-name">Request Media</span>
+                <span class="card-desc">Ask for a movie or show to be added</span>
+              </span>
+              <span class="status" data-state="checking"><span class="status-dot"></span><span class="status-text">Checking…</span></span>
+            </a>
+          </li>
+        </ul>
       </section>
+
+      <section class="group" aria-labelledby="g-read">
+        <h2 class="group-title" id="g-read">Listen &amp; read</h2>
+        <ul class="cards">
+          <li>
+            <a class="card card-audio" href="https://audiobooks.kportal.net/" rel="noopener noreferrer" data-ping="https://audiobooks.kportal.net/" data-key="3" data-name="AudioBooks">
+              <img class="card-icon" src="assets/icons/audiobookshelf.svg" width="48" height="48" alt="">
+              <span class="card-body">
+                <span class="card-name">AudioBooks</span>
+                <span class="card-desc">Listen in the browser or the app</span>
+              </span>
+              <span class="status" data-state="checking"><span class="status-dot"></span><span class="status-text">Checking…</span></span>
+            </a>
+          </li>
+          <li>
+            <a class="card card-books" href="https://calibreweb.kportal.net/" rel="noopener noreferrer" data-ping="https://calibreweb.kportal.net/" data-key="4" data-name="Books">
+              <img class="card-icon" src="assets/icons/kavita.svg" width="48" height="48" alt="">
+              <span class="card-body">
+                <span class="card-name">Books</span>
+                <span class="card-desc">Read or download ebooks</span>
+              </span>
+              <span class="status" data-state="checking"><span class="status-dot"></span><span class="status-text">Checking…</span></span>
+            </a>
+          </li>
+        </ul>
+      </section>
+
+      <section class="group" aria-labelledby="g-play">
+        <h2 class="group-title" id="g-play">Play</h2>
+        <div class="server card-mc">
+          <img class="card-icon" src="assets/icons/minecraft.svg" width="48" height="48" alt="">
+          <div class="card-body">
+            <div class="server-head">
+              <h3 class="card-name" id="mc-title">Minecraft</h3>
+              <span class="status" id="mc-status" data-state="checking"><span class="status-dot"></span><span class="status-text">Checking…</span></span>
+            </div>
+            <p class="server-meta">
+              <code class="server-addr" id="mc-addr">mc.kportal.net</code>
+              <span id="mc-players"></span>
+              <span id="mc-version"></span>
+            </p>
+          </div>
+          <button class="copy" id="mc-copy" type="button" data-key="5">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+            <span id="mc-copy-label">Copy address</span>
+          </button>
+        </div>
+      </section>
+
+      <details class="help">
+        <summary>
+          <span>New here? How to get started</span>
+          <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <ol class="steps">
+          <li><strong>Get a Plex invite.</strong> Make a free account at plex.tv, then ask the Kportal admin to share the library with you.</li>
+          <li><strong>Watch anywhere.</strong> Open Plex in a browser, or install the Plex app on your TV, phone or console and sign in.</li>
+          <li><strong>Want something new?</strong> Open Request Media, sign in with the same Plex account and search for it. It shows up in Plex once it's added.</li>
+          <li><strong>AudioBooks and Books</strong> have their own logins. Ask the admin for one.</li>
+          <li><strong>Minecraft:</strong> copy the server address, then in the game go to Multiplayer → Add Server and paste it.</li>
+        </ol>
+      </details>
     </main>
 
     <footer class="foot">
