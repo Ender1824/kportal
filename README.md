@@ -6,7 +6,7 @@ The launch page for the apps hosted on Kportal, served at https://www.kportal.ne
 
 | File | Purpose |
 |---|---|
-| `index.html` | Page structure: status summary, orbit hero, app groups (Watch, Listen & read, Play), getting-started guide, footer |
+| `index.html` | Page structure: status summary, orbit hero, app groups (Watch, Listen & read, Play), footer |
 | `styles.css` | All styling. Colors are CSS variables at the top of the file |
 | `app.js` | Clock, status checks, Minecraft status, copy button, keyboard shortcuts, starfield |
 | `assets/logo.png` | Original logo (used as the favicon and phone home-screen icon) |
@@ -25,7 +25,7 @@ The launch page for the apps hosted on Kportal, served at https://www.kportal.ne
    - `data-key`: the next free number key
    - the icon `src`
 3. Give the card an accent colour: add a class like `card-photos` and, in `styles.css` next to `.card-plex`, add `.card-photos { --accent: R, G, B; }`.
-4. Renumber the footer shortcut hint and the Minecraft button's `data-key`, and add a line to the getting-started guide if new users need to know something.
+4. Renumber the footer shortcut hint and the Minecraft button's `data-key`.
 5. Commit and push. GitHub Pages updates within about a minute.
 
 ## How things work
