@@ -6,7 +6,7 @@ The launch page for the apps hosted on Kportal, served at https://www.kportal.ne
 
 | File | Purpose |
 |---|---|
-| `index.html` | Page structure: status summary, orbit hero, app groups (Watch, Listen & read, Play), footer |
+| `index.html` | Page structure: logo and status summary, app groups (Watch, Listen & read, Play), footer |
 | `styles.css` | All styling. Colors are CSS variables at the top of the file |
 | `app.js` | Clock, status checks, Minecraft status, copy button, keyboard shortcuts, starfield |
 | `assets/logo.png` | Original logo (used as the favicon and phone home-screen icon) |

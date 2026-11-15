@@ -91,7 +91,7 @@ main {
   display: flex;
   flex-direction: column;
   gap: 28px;
-  padding-bottom: 40px;
+  padding: 44px 0 40px;
 }
 
 /* ---------- Top bar ---------- */
@@ -101,6 +101,20 @@ main {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+}
+
+.top-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  filter: drop-shadow(0 0 10px rgba(179, 166, 255, 0.45));
 }
 
 .summary {
@@ -138,8 +152,6 @@ main {
 .clock-time { font-family: var(--font-display); font-size: 20px; font-weight: 550; }
 .clock-date { font-size: 12.5px; color: var(--text-dim); }
 
-/* ---------- Hero with orbiting logo ---------- */
-
 .visually-hidden {
   position: absolute;
   width: 1px; height: 1px;
@@ -149,83 +161,6 @@ main {
   white-space: nowrap;
   border: 0;
 }
-
-.hero {
-  display: flex;
-  justify-content: center;
-  padding: 8px 0 20px;
-}
-
-.orbit {
-  --size: 230px;
-  position: relative;
-  flex: none;
-  width: var(--size);
-  height: calc(var(--size) * 0.72); /* the tilted rings are wider than tall */
-}
-
-.orbit-glow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: calc(var(--size) * 0.64);
-  height: calc(var(--size) * 0.64);
-  translate: -50% -50%;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(179, 166, 255, 0.45) 0%, rgba(125, 211, 252, 0.18) 45%, transparent 70%);
-  filter: blur(14px);
-  animation: breathe 7s ease-in-out infinite;
-}
-
-/* Tilted plane so the rings read as orbits seen at an angle. */
-.orbit-plane {
-  position: absolute;
-  inset: 0;
-  transform: rotateX(58deg) rotateZ(-20deg);
-  transform-style: preserve-3d;
-}
-
-.ring {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  border-radius: 50%;
-  border: 1.5px solid rgba(200, 208, 255, 0.3);
-  translate: -50% -50%;
-  animation: spin linear infinite;
-}
-.ring-1 { width: calc(var(--size) * 0.66); height: calc(var(--size) * 0.66); animation-duration: 14s; border-color: rgba(179, 166, 255, 0.55); box-shadow: 0 0 18px rgba(179, 166, 255, 0.25), inset 0 0 18px rgba(179, 166, 255, 0.15); }
-.ring-2 { width: calc(var(--size) * 0.88); height: calc(var(--size) * 0.88); animation-duration: 24s; animation-direction: reverse; border-style: dashed; border-color: rgba(200, 208, 255, 0.35); }
-.ring-3 { width: calc(var(--size) * 1.12); height: calc(var(--size) * 1.12); animation-duration: 40s; border-color: rgba(125, 211, 252, 0.35); }
-
-.moon {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  translate: -50% -50%;
-  background: #fff;
-  box-shadow: 0 0 10px 2px rgba(179, 166, 255, 0.9);
-}
-.ring-2 .moon { width: 7px; height: 7px; background: #7dd3fc; box-shadow: 0 0 10px 2px rgba(125, 211, 252, 0.9); top: 50%; left: 0; }
-.ring-3 .moon { width: 5px; height: 5px; background: #fde68a; box-shadow: 0 0 8px 2px rgba(253, 230, 138, 0.8); top: 100%; }
-
-.orbit-core {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: calc(var(--size) * 0.42);
-  height: calc(var(--size) * 0.42);
-  translate: -50% -50%;
-  filter: drop-shadow(0 0 18px rgba(179, 166, 255, 0.55));
-  animation: bob 6s ease-in-out infinite;
-}
-
-@keyframes spin { to { rotate: 360deg; } }
-@keyframes bob { 50% { transform: translateY(-5px); } }
-@keyframes breathe { 50% { opacity: 0.65; scale: 0.92; } }
 
 /* ---------- Groups and cards ---------- */
 
@@ -440,8 +375,7 @@ a:focus-visible, button:focus-visible {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: none; }
 }
-.top, .hero, .group, .foot { animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
-.hero { animation-delay: 0.05s; }
+.top, .group, .foot { animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
 .group:nth-of-type(1) { animation-delay: 0.15s; }
 .group:nth-of-type(2) { animation-delay: 0.22s; }
 .group:nth-of-type(3) { animation-delay: 0.29s; }
@@ -450,8 +384,6 @@ a:focus-visible, button:focus-visible {
 /* ---------- Small screens ---------- */
 
 @media (max-width: 720px) {
-  .hero { padding: 4px 0 14px; }
-  .orbit { --size: 180px; }
   .cards { grid-template-columns: 1fr; gap: 10px; }
 }
 
@@ -461,7 +393,9 @@ a:focus-visible, button:focus-visible {
     padding-right: max(16px, env(safe-area-inset-right));
     padding-top: max(16px, env(safe-area-inset-top));
   }
-  main { gap: 22px; }
+  main { gap: 22px; padding-top: 28px; }
+  .logo { width: 34px; height: 34px; }
+  .top-left { gap: 10px; }
   .summary { font-size: 12px; padding: 5px 10px 5px 9px; }
   .clock-time { font-size: 17px; }
   .clock-date { font-size: 11.5px; }
